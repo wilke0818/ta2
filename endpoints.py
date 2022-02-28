@@ -18,6 +18,11 @@ def edit_group(group_id):
 def get_group(group_id):
 	return edit_group(group_id)
 
+def get_all_groups(course_id):
+	root = "https://canvas.mit.edu/api/v1/courses/"
+	suffix = "/groups"
+	return f"{root}{course_id}{suffix}"
+
 def enrollment(course_id):
 	root = "https://canvas.mit.edu/api/v1/courses/"
 	suffix = "/users"

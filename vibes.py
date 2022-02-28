@@ -81,3 +81,38 @@ def vibes():
 		group_name = groups.get_group(messed_up_team)["name"]
 		print(f"Team {group_name}")
 
+def consolidate_all():
+	log_start(f"finding 6.033 on canvas")
+	course_id = courses.find_6033()
+	log_ok(f"course id {course_id}")
+
+	log_start("getting all valid DP team groups")
+	dp_teams = groups.get_all_small_groups(course_id)
+	log_ok(f"got {len(dp_teams)} groups")
+
+	log_start(f"creating mega-category with capacity {len(dp_teams)}")
+	group_ids = categories.create_group_category(course_id,
+							"All DP Teams",
+							len(dp_teams))
+	log_ok()
+
+	for i in range(len(dp_teams)):
+		group_id = dp_teams[i]
+		target_id = group_ids[i]
+
+		log_start(f"getting info for group id {group_id}")
+		this_group, members = groups.get_group(group_id, get_users=True)
+
+		group_name = this_group["name"]
+		group_description = this_group["description"]
+
+		log_ok(f"group name {group_name}, {len(members)} members")
+
+		log_start(f"naming target group {group_name}")
+		groups.rename_group(target_id, group_name, group_description)
+		log_ok()
+
+		log_start(f"copying {group_name} membership")
+		groups.set_group_membership(target_id, members)
+		log_ok()
+

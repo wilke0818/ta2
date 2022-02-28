@@ -23,6 +23,20 @@ def get_group(group_id, get_users=False):
 
 	else: return userless_response
 
+def get_all_small_groups(course_id):
+	r = requests.get(endpoints.get_all_groups(course_id),
+				headers=authentication.header)
+
+	def process_response(group):
+		if group["members_count"] > 4: return None
+		elif "TEST" in group["name"]: return None
+		return group["id"]
+
+	def aggregate_responses(groups):
+		return groups
+
+	return pagination.process(r, process_response, aggregate_responses)
+
 def rename_group(group_id, new_name, new_description):
 	parameters = {"name": new_name, "description": new_description}
 	r = requests.put(endpoints.edit_group(group_id),
@@ -45,9 +59,9 @@ def test_rename_group():
 	groups = categories.create_group_category(id_033, name, capacity)
 	test_group = groups[0]
 
-	rename_group(test_group, "My favorite group", "Hi friend!")
+	rename_group(test_group, "TEST My favorite group", "Hi friend!")
 	altered_group = get_group(test_group)
-	assert altered_group["name"] == "My favorite group"
+	assert altered_group["name"] == "TEST My favorite group"
 
 def test_set_group_membership():
 	import courses
@@ -65,6 +79,22 @@ def test_set_group_membership():
 	group_members.append(emails_to_ids["quel@MIT.EDU"])
 
 	set_group_membership(test_group, group_members)
-	_groups, membership = get_group(test_group, get_users=True)
+	_group, membership = get_group(test_group, get_users=True)
 	assert len(membership) == 2
 
+def test_get_all_small_groups():
+	import categories
+
+	id_033 = 13713
+	name = "TEST SMALL GROUPS"
+	capacity = 1
+
+	all_groups = categories.create_group_category(id_033, name, capacity)
+	groups = get_all_small_groups(id_033)
+	assert len(groups) == 0
+
+	test_group = all_groups[0]
+	rename_group(test_group, "not a test", "Hi friend!")
+
+	groups = get_all_small_groups(id_033)
+	assert len(groups) == 1
