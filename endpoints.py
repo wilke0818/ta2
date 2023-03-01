@@ -32,4 +32,26 @@ def users_in_group(group_id):
 	root = "https://canvas.mit.edu/api/v1/groups/"
 	suffix = "/users"
 	return f"{root}{group_id}{suffix}"
-	
+
+
+def get_all_sections(course_id):
+	root = "https://canvas.mit.edu/api/v1/courses/"
+	suffix = "/sections"
+	return f"{root}{course_id}{suffix}"
+
+
+def get_section_enrollments(section_id):
+        root = "https://canvas.mit.edu/api/v1/sections/"
+        suffix = "/enrollments"
+        return f"{root}{section_id}{suffix}"
+
+
+def get_user_profile(user_id):
+        root = "https://canvas.mit.edu/api/v1/users/"
+        suffix = "/profile"
+        return f"{root}{user_id}{suffix}"
+
+def get_user_avatar(user_id):
+        root = "https://canvas.mit.edu/api/v1/users/"
+        suffix = "/avatars.json"
+        return f"{root}{user_id}{suffix}"

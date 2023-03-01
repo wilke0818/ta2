@@ -2,10 +2,13 @@ import authentication
 import endpoints
 import pagination
 import requests
+import utils
 
-target_name = "6.033 Computer Systems Engineering"
+target_name = "6.1800 Computer Systems Engineering"
 
 def find_6033():
+	if utils.course_id:
+          return utils.course_id
 	r = requests.get(endpoints.courses(), headers=authentication.header)
 	decoded_response = r.json()	
 
